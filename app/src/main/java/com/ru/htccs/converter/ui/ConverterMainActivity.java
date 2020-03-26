@@ -6,13 +6,14 @@ import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.ru.htccs.converter.R;
 import static com.ru.htccs.converter.model.types.ConverterTypes.*;
 
 
-public class ConverterMainActivity extends AppCompatActivity implements  ConverterView, View.OnClickListener {
+public class ConverterMainActivity extends AppCompatActivity implements ConverterView, View.OnClickListener {
     final int LOW = 1;
     final int MEDIUM = 2;
     final int HIGH = 3;
@@ -28,7 +29,10 @@ public class ConverterMainActivity extends AppCompatActivity implements  Convert
     TextView viewMm;
     TextView viewPt;
     TextView viewIn;
+
     EditText editText;
+    Button plus;
+    Button minus;
 
     ConverterPresenter converterPresenter = new ConverterPresenter();
 
@@ -44,12 +48,14 @@ public class ConverterMainActivity extends AppCompatActivity implements  Convert
         viewMm.findViewById(R.id.viewMm).setOnClickListener(this);
         viewPt.findViewById(R.id.viewPt).setOnClickListener(this);
         viewIn.findViewById(R.id.viewIn).setOnClickListener(this);
-        editText.findViewById(R.id.editText);
+        plus.findViewById(R.id.button_plus).setOnClickListener(this);
+        minus.findViewById(R.id.button_minus).setOnClickListener(this);
+
+        converterPresenter.onAttach(this);
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         if (v.getId() == R.id.context_menu) {
             menu.add(0, LOW, 0, "ldpi (low) ~120dpi");
             menu.add(0, MEDIUM, 0, "mdpi (medium) ~160dpi");
@@ -95,11 +101,11 @@ public class ConverterMainActivity extends AppCompatActivity implements  Convert
     @SuppressLint("SetTextI18n")
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.viewDp:
                 converterPresenter.setNameConverter(DP);
                 textView.setText("dp is abstract unit which is based\n" +
-                        "on the physical density of the screen.\n"+
+                        "on the physical density of the screen.\n" +
                         "It keeps exact dimensions allowing some physical size\n" +
                         "variation depending on device density(dpi).");
                 break;
@@ -129,11 +135,16 @@ public class ConverterMainActivity extends AppCompatActivity implements  Convert
                 converterPresenter.setNameConverter(IN);
                 textView.setText("unit of measurement based on the physical size of the screen");
                 break;
+            case R.id.button_plus:
+                converterPresenter.setValues(converterPresenter.getValues() + 1);
+                break;
+            case R.id.button_minus:
+                converterPresenter.setValues(converterPresenter.getValues() - 1);
+                break;
         }
     }
 
-    @Override
-    public double getValues() {
-        return Double.parseDouble(editText.getText().toString());
+    public double returnValues() {
+        return Double.parseDouble(String.valueOf(editText.getText()));
     }
 }
